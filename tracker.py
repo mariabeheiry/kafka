@@ -12,22 +12,27 @@ consumer.subscribe(['orders'])
 
 print("Consuming messages from 'orders' topic...")
 
-while True:
-    msg = consumer.poll(1.0)  # Poll for messages with a timeout of 1 second
+try:
+    while True:
+        msg = consumer.poll(1.0)  # Poll for messages with a timeout of 1 second
 
-    if msg is None:
-        continue  # No message received, continue polling
-    if msg.error():
-        print(f"Consumer error: {msg.error()}")
-        continue
+        if msg is None:
+            continue  # No message received, continue polling
+        if msg.error():
+            print(f"Consumer error: {msg.error()}")
+            continue
 
-    value = msg.value()
-    if value is None:
-        continue
+        value = msg.value()
+        if value is None:
+            continue
 
-    value = value.decode('utf-8')
-    order = json.loads(value)
+        value = value.decode('utf-8')
+        order = json.loads(value)
 
-    # Process the received message
-    print(f"Received message: {order['quantity']} x {order['item']} for user {order['user']} with order ID {order['order_id']}")
-    
+        # Process the received message
+        print(f"Received message: {order['quantity']} x {order['item']} for user {order['user']} with order ID {order['order_id']}")
+except KeyboardInterrupt:
+    print("Stopping consumer...")
+
+finally:
+    consumer.close()
