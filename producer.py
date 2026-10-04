@@ -23,6 +23,7 @@ def delivery_report(err, msg):
     else:
         print(f"Message delivered to {msg.topic()} [{msg.partition()}]")
         print(f"{msg.value().decode('utf-8')}")
+        print(dir(msg))
 
 producer.produce(topic='orders', key=order['order_id'], value=value, callback=delivery_report)
 
