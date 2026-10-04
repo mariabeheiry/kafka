@@ -17,6 +17,13 @@ order = {
 
 value = json.dumps(order).encode("utf-8")
 
-producer.produce(topic='orders', key=order['order_id'], value=value)
+def delivery_report(err, msg):
+    if err is not None:
+        print(f"Message delivery failed: {err}")
+    else:
+        print(f"Message delivered to {msg.topic()} [{msg.partition()}]")
+        print(f"{msg.value().decode('utf-8')}")
+
+producer.produce(topic='orders', key=order['order_id'], value=value, callback=delivery_report)
 
 producer.flush()
